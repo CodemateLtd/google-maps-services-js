@@ -18,6 +18,7 @@ import { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
 import {
   CellTower,
   LatLngLiteral,
+  NewRadioCellTower,
   RadioType,
   RequestParams,
   ResponseData,
@@ -41,8 +42,11 @@ export interface GeolocateRequest extends Partial<AxiosRequestConfig> {
      * Defaults to `true`. Set `considerIp` to `false` to disable fall back.
      */
     considerIp?: boolean;
-    /** An array of cell tower objects. */
-    cellTowers?: CellTower[];
+    /**
+     * An array of cell tower objects. Use {@link NewRadioCellTower} when `radioType` is `nr`,
+     * and {@link CellTower} for the other radio types.
+     */
+    cellTowers?: (CellTower | NewRadioCellTower)[];
     /** An array of WiFi access point objects. */
     wifiAccessPoints?: WifiAccessPoint[];
   };
