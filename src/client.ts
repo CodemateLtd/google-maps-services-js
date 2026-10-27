@@ -75,6 +75,11 @@ import {
   snapToRoads,
 } from "./roads/snaptoroads";
 import {
+  SpeedLimitsRequest,
+  SpeedLimitsResponse,
+  speedLimits,
+} from "./roads/speedlimits";
+import {
   TextSearchRequest,
   TextSearchResponse,
   textSearch,
@@ -269,6 +274,22 @@ export class Client {
   snapToRoads(request: SnapToRoadsRequest): Promise<SnapToRoadsResponse> {
     return snapToRoads(request, this.axiosInstance);
   }
+  /**
+   * Returns the posted speed limit for road segments, given either a path or the place IDs of road
+   * segments. For road segments with variable speed limits, it returns the maximum speed limit for
+   * automobiles.
+   *
+   * The Speed Limit service is available to customers with an Asset Tracking license. For Premium
+   * Plan customers who moved to pay-as-you-go pricing, it remains active on projects with Asset
+   * Tracking capabilities.
+   *
+   * Speed limit data isn't real-time, and may be estimated, inaccurate, incomplete or outdated.
+   *
+   * @see https://developers.google.com/maps/documentation/roads/speed-limits
+   */
+  speedLimits(request: SpeedLimitsRequest): Promise<SpeedLimitsResponse> {
+    return speedLimits(request, this.axiosInstance);
+  }
 }
 
 export {
@@ -300,6 +321,8 @@ export {
   ReverseGeocodeResponse,
   SnapToRoadsRequest,
   SnapToRoadsResponse,
+  SpeedLimitsRequest,
+  SpeedLimitsResponse,
   TextSearchRequest,
   TextSearchResponse,
   TimeZoneRequest,
