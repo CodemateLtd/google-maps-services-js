@@ -97,3 +97,26 @@ test("serializer should keep sending the deprecated enable_address_descriptor", 
     "enable_address_descriptor=True&key=YOUR_API_KEY&latlng=28.640964%2C77.235875"
   );
 });
+
+test("serializer should leave out enable_address_descriptor when false", () => {
+  expect(
+    defaultParamsSerializer({
+      latlng: { lat: 28.640964, lng: 77.235875 },
+      enable_address_descriptor: false,
+      key: "YOUR_API_KEY",
+    })
+  ).toBe("key=YOUR_API_KEY&latlng=28.640964%2C77.235875");
+});
+
+test("serializer should leave out enable_address_descriptor when false for premium plan requests", () => {
+  expect(
+    defaultParamsSerializer({
+      latlng: { lat: 28.640964, lng: 77.235875 },
+      enable_address_descriptor: false,
+      client_id: "testClient",
+      client_secret: "testClientSecret",
+    })
+  ).toBe(
+    "client=testClient&latlng=28.640964%2C77.235875&signature=tTA435oViZ_IoVjWyGRyOSObhhI="
+  );
+});
