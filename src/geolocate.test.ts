@@ -85,3 +85,15 @@ test("geolocate should ignore undefined Premium Plan params", () => {
     url: defaultUrl,
   });
 });
+
+test("GeolocateRequest should accept only API key params", async () => {
+  const request: GeolocateRequest = {
+    // @ts-expect-error Premium Plan params are not supported.
+    params: { client_id: "gme-example", client_secret: "DUMMY_SIGNING_SECRET" },
+    data: {},
+  };
+
+  await expect(geolocate(request, mockedAxios)).rejects.toThrow(
+    "only API key authentication"
+  );
+});

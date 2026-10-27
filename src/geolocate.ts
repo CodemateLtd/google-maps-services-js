@@ -16,11 +16,11 @@
 
 import { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
 import {
+  ApiKeyParams,
   CellTower,
   LatLngLiteral,
   PremiumPlanParams,
   RadioType,
-  RequestParams,
   ResponseData,
   WifiAccessPoint,
 } from "./common";
@@ -47,7 +47,11 @@ export interface GeolocateRequest extends Partial<AxiosRequestConfig> {
     /** An array of WiFi access point objects. */
     wifiAccessPoints?: WifiAccessPoint[];
   };
-  params: RequestParams;
+  /**
+   * The Geolocation API accepts only API key authentication. Premium Plan `client_id` and `client_secret`
+   * are not supported, and `geolocate` rejects requests that include them.
+   */
+  params: ApiKeyParams;
 }
 
 export interface GeolocateResponseData extends ResponseData {
