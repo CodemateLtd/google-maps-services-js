@@ -75,6 +75,52 @@ test("httpadapter resolves Status.OK", async () => {
   expect(r.data).toEqual(response);
 });
 
+test("httpadapter rejects Status.DATA_NOT_AVAILABLE", async () => {
+  const response = { status: Status.DATA_NOT_AVAILABLE, results: [] };
+
+  nock("https://maps.googleapis.com")
+    .get("/maps/api/elevation/json?key=foo&locations=10%2C20")
+    .reply(200, JSON.stringify(response), {
+      "Content-Type": "application/json",
+    });
+
+  const client = new Client();
+
+  const params = {
+    locations: ["10,20"],
+    key: "foo",
+  };
+
+  await expect(client.elevation({ params: params })).rejects.toMatchObject({
+    message: "Request failed with status code 404",
+    response: { status: 404, data: response },
+  });
+});
+
+test("httpadapter respects validateStatus for Status.DATA_NOT_AVAILABLE", async () => {
+  const response = { status: Status.DATA_NOT_AVAILABLE, results: [] };
+
+  nock("https://maps.googleapis.com")
+    .get("/maps/api/elevation/json?key=foo&locations=10%2C20")
+    .reply(200, JSON.stringify(response), {
+      "Content-Type": "application/json",
+    });
+
+  const client = new Client();
+
+  const params = {
+    locations: ["10,20"],
+    key: "foo",
+  };
+
+  const r: AxiosResponse = await client.elevation({
+    params: params,
+    validateStatus: () => true,
+  });
+  expect(r.status).toEqual(404);
+  expect(r.data).toEqual(response);
+});
+
 test("statusToCode returns correct value", () => {
   expect(statusToCode(Status.OK)).toEqual(200);
   expect(statusToCode(Status.ZERO_RESULTS)).toEqual(200);
@@ -83,6 +129,7 @@ test("statusToCode returns correct value", () => {
   expect(statusToCode(Status.MAX_WAYPOINTS_EXCEEDED)).toEqual(400);
   expect(statusToCode(Status.REQUEST_DENIED)).toEqual(403);
   expect(statusToCode(Status.NOT_FOUND)).toEqual(404);
+  expect(statusToCode(Status.DATA_NOT_AVAILABLE)).toEqual(404);
   expect(statusToCode(Status.OVER_DAILY_LIMIT)).toEqual(429);
   expect(statusToCode(Status.OVER_QUERY_LIMIT)).toEqual(429);
   expect(statusToCode(Status.UNKNOWN_ERROR)).toEqual(500);
