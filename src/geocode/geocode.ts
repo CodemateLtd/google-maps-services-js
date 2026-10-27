@@ -19,6 +19,7 @@ import {
   GeocodeResult,
   ResponseData,
   RequestParams,
+  ExtraComputation,
 } from "../common";
 import { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
 import { defaultAxiosInstance } from "../client";
@@ -85,6 +86,11 @@ export interface GeocodeRequest extends Partial<AxiosRequestConfig> {
      * Each element in the components filter consists of a `component:value` pair, and fully restricts the results from the geocoder.
      */
     components?: string | GeocodeComponents;
+    /**
+     * An additional feature to return in the response.
+     * Use `ExtraComputation.ADDRESS_DESCRIPTORS` to receive an address descriptor on each result that supports one.
+     */
+    extra_computations?: ExtraComputation;
   } & RequestParams;
 }
 
