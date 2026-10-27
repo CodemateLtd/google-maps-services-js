@@ -33,7 +33,8 @@ export function statusToCode(status: Status): number {
     case Status.REQUEST_DENIED: {
       return 403;
     }
-    case Status.NOT_FOUND: {
+    case Status.NOT_FOUND:
+    case Status.DATA_NOT_AVAILABLE: {
       return 404;
     }
     case Status.OVER_DAILY_LIMIT:
