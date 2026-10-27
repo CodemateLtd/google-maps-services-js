@@ -87,6 +87,15 @@ export {
 } from "./geocode/reversegeocode";
 export { SnapToRoadsRequest, SnapToRoadsResponse } from "./roads/snaptoroads";
 export {
+  SpeedLimit,
+  SpeedLimitUnits,
+  SpeedLimitsPathParams,
+  SpeedLimitsPlaceIdParams,
+  SpeedLimitsRequest,
+  SpeedLimitsResponse,
+  SpeedLimitsResponseData,
+} from "./roads/speedlimits";
+export {
   TextSearchRequest,
   TextSearchResponse,
   TextSearchResponseData,
