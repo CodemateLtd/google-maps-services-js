@@ -120,7 +120,7 @@ This section discusses the migration from [@google/maps](https://npmjs.com/packa
 
 > **Note**: The two libraries do not share any methods or interfaces.
 
-The primary difference is `@google/maps` exposes a public method that takes individual parameters as arguments while `@googlemaps/google-maps-services-js` exposes methods that take `params`, `headers`, `body`, `instance`(see [Axios](https://github.com/axios/axios)). This allows direct access to the transport layer without the complexity that was inherent in the old library. Below are two examples.
+The primary difference is `@google/maps` exposes a public method that takes individual parameters as arguments while `@googlemaps/google-maps-services-js` exposes methods that take a single request object: `params`, plus [Axios request config](https://github.com/axios/axios#request-config) such as `headers` and `timeout`. The Axios instance is set once, on the `Client`. This allows direct access to the transport layer without the complexity that was inherent in the old library. Below are two examples.
 
 ### Old (`@google/maps`)
 
@@ -153,7 +153,7 @@ client
       key: process.env.MAPS_API_KEY
     },
     timeout: 1000 // milliseconds
-  }, axiosInstance)
+  })
   .then(r => {
     console.log(r.data.results[0].elevation);
   })
@@ -166,7 +166,7 @@ The primary differences are in the following table.
 
 | Old        | New           |
 | ------------- |:-------------:|
-| Can provide params     | Can provide params, headers, instance, timeout (see [Axios Request Config](https://github.com/axios/axios#request-config)) |
+| Can provide params     | Can provide params, headers, timeout (see [Axios Request Config](https://github.com/axios/axios#request-config)); custom Axios instance set on the Client |
 | API key configured at Client | API key configured per method in params object|
 | Retry is supported      | Retry is configurable via [axios-retry](https://npmjs.com/package/axios-retry) or [retry-axios](https://npmjs.com/package/retry-axios)      |
 | Does not use promises by default | Promises are default     |
@@ -174,6 +174,30 @@ The primary differences are in the following table.
 | Does not support keep alive | Supports keep alive |
 | Does not support interceptors | Supports [interceptors](https://github.com/axios/axios#interceptors)|
 | Does not support cancelalation | Supports [cancellation](https://github.com/axios/axios#cancellation) |
+
+To control the transport yourself, for example with interceptors, pass your own Axios instance to the `Client` constructor as `axiosInstance`, or pass `config` and the client creates one. Every method on that client uses it.
+
+```js
+import axios from "axios";
+import {Client} from "@googlemaps/google-maps-services-js";
+
+const axiosInstance = axios.create({ timeout: 1000 });
+const client = new Client({ axiosInstance });
+
+client
+  .elevation({
+    params: {
+      locations: [{ lat: 45, lng: -110 }],
+      key: process.env.MAPS_API_KEY
+    }
+  })
+  .then(r => {
+    console.log(r.data.results[0].elevation);
+  })
+  .catch(e => {
+    console.log(e);
+  });
+```
 
 ## Premium Plan Authentication
 
