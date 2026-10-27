@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { ExtraComputation } from "../../src/common";
 import { reverseGeocode } from "../../src/geocode/reversegeocode";
 
 test("reverseGeocode should return correct response", async () => {
@@ -44,7 +45,7 @@ test("reverseGeocode should return correct response when address descriptors are
       lat: 28.650080,
       lng: 77.233172,
     },
-    enable_address_descriptor: true,
+    extra_computations: ExtraComputation.ADDRESS_DESCRIPTORS,
     key: process.env.GOOGLE_MAPS_API_KEY,
   };
   const r = await reverseGeocode({ params: params });

@@ -1628,6 +1628,15 @@ export interface SnappedPoint {
   placeId: string;
 }
 
+/** Additional features that a geocoding request can ask to receive in the response. */
+export enum ExtraComputation {
+  /**
+   * Returns address descriptors: nearby landmarks and containing areas that describe the location.
+   * @see [Address descriptors](https://developers.google.com/maps/documentation/geocoding/guides-v3/address-descriptors/requests-address-descriptors).
+   */
+  ADDRESS_DESCRIPTORS = "ADDRESS_DESCRIPTORS",
+}
+
 /**
  * Represents a descriptor of an address.
  *
