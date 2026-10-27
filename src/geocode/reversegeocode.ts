@@ -109,7 +109,9 @@ export interface ReverseGeocodeResponseData extends ResponseData {
    */
   results: GeocodeResult[];
   /**
-   * The Address Descriptor for the target.
+   * The address descriptor for the requested `latlng`, returned when the request sets `extra_computations`
+   * to `ExtraComputation.ADDRESS_DESCRIPTORS` or the deprecated `enable_address_descriptor`.
+   * A request by `place_id` gets one on each result that supports it instead, in `results[].address_descriptor`.
    */
   address_descriptor: AddressDescriptor;
 }

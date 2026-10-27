@@ -1439,6 +1439,17 @@ export interface GeocodeResult {
   partial_match: boolean;
   /** is a unique identifier that can be used with other Google APIs. */
   place_id: string;
+  /**
+   * describes the location with nearby landmarks and containing areas.
+   *
+   * Requests by address or place ID return one on each result that supports it when the request sets
+   * `extra_computations` to `ExtraComputation.ADDRESS_DESCRIPTORS`. Very large places, such as airports,
+   * and areas, such as postal regions, never get one. Reverse geocoding by `latlng` returns a single
+   * `address_descriptor` on the response instead.
+   *
+   * @see [Address descriptors](https://developers.google.com/maps/documentation/geocoding/guides-v3/address-descriptors/requests-address-descriptors)
+   */
+  address_descriptor?: AddressDescriptor;
 }
 
 export enum GeocodingAddressComponentType {
