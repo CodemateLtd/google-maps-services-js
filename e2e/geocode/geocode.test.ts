@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { ExtraComputation } from "../../src/common";
 import { geocode } from "../../src/geocode/geocode";
 
 test("geocode should call axios correctly", async () => {
@@ -29,4 +30,25 @@ test("geocode should call axios correctly", async () => {
 
   const r = await geocode({ params: params });
   expect(r.data.results[0].place_id).toBeDefined();
+});
+
+test("geocode should return an address descriptor on the result when requested", async () => {
+  const params = {
+    address: "4118, Kalan Mehal Chandni Chowk, New Delhi",
+    extra_computations: ExtraComputation.ADDRESS_DESCRIPTORS,
+    key: process.env.GOOGLE_MAPS_API_KEY,
+  };
+
+  const r = await geocode({ params: params });
+  expect(r.data.results[0].address_descriptor).toBeDefined();
+  const { landmarks, areas } = r.data.results[0].address_descriptor;
+  expect(r.data).not.toHaveProperty("address_descriptor");
+  expect(landmarks[0].place_id).toBeDefined();
+  expect(landmarks[0].display_name.text).toBeDefined();
+  expect(landmarks[0].display_name.language_code).toBeDefined();
+  expect(landmarks[0].spatial_relationship).toBeDefined();
+  expect(landmarks[0].straight_line_distance_meters).toBeDefined();
+  expect(areas[0].place_id).toBeDefined();
+  expect(areas[0].display_name.text).toBeDefined();
+  expect(areas[0].containment).toBeDefined();
 });

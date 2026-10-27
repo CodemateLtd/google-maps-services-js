@@ -88,7 +88,7 @@ export interface GeocodeRequest extends Partial<AxiosRequestConfig> {
     components?: string | GeocodeComponents;
     /**
      * An additional feature to return in the response.
-     * Use `ExtraComputation.ADDRESS_DESCRIPTORS` to receive an address descriptor on each result that supports one.
+     * Use `ExtraComputation.ADDRESS_DESCRIPTORS` to receive an `address_descriptor` on each result that supports one.
      */
     extra_computations?: ExtraComputation;
   } & RequestParams;

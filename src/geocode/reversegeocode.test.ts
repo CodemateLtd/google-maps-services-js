@@ -15,7 +15,15 @@
  */
 
 import axios from "axios";
-import { ExtraComputation } from "../common";
+import {
+  AddressDescriptor,
+  Area,
+  Containment,
+  ExtraComputation,
+  Landmark,
+  LocalizedText,
+  SpatialRelationship,
+} from "../common";
 import {
   ReverseGeocodeRequest,
   reverseGeocode,
@@ -119,4 +127,88 @@ test("serializer should leave out enable_address_descriptor when false for premi
   ).toBe(
     "client=testClient&latlng=28.640964%2C77.235875&signature=tTA435oViZ_IoVjWyGRyOSObhhI="
   );
+});
+
+test("reverseGeocode response should type the address descriptor with the API's field names", async () => {
+  // Trimmed from the response example in the address descriptors guide.
+  jest.mocked(axios).mockResolvedValueOnce({
+    data: {
+      status: "OK",
+      results: [],
+      address_descriptor: {
+        areas: [
+          {
+            containment: "OUTSKIRTS",
+            display_name: { language_code: "en", text: "Turkman Gate" },
+            place_id: "ChIJ_7LLvyb9DDkRMKKxP9YyXgs",
+          },
+        ],
+        landmarks: [
+          {
+            display_name: { language_code: "en", text: "Delite Cinema" },
+            straight_line_distance_meters: 29.9306755065918,
+            place_id: "ChIJLfiYDCT9DDkROoEa7NdupUM",
+            travel_distance_meters: 418.7794799804688,
+            spatial_relationship: "ACROSS_THE_ROAD",
+            types: ["establishment", "movie_theater", "point_of_interest"],
+          },
+        ],
+      },
+    },
+  });
+
+  const { address_descriptor } = (
+    await reverseGeocode(
+      { params: { latlng: "28.640964,77.235875", key: "foo" } },
+      mockedAxios
+    )
+  ).data;
+  const [landmark] = address_descriptor.landmarks;
+  const [area] = address_descriptor.areas;
+
+  expect(landmark.place_id).toBe("ChIJLfiYDCT9DDkROoEa7NdupUM");
+  expect(landmark.display_name.text).toBe("Delite Cinema");
+  expect(landmark.display_name.language_code).toBe("en");
+  expect(landmark.types).toEqual([
+    "establishment",
+    "movie_theater",
+    "point_of_interest",
+  ]);
+  expect(landmark.spatial_relationship).toBe(
+    SpatialRelationship.ACROSS_THE_ROAD
+  );
+  expect(landmark.straight_line_distance_meters).toBe(29.9306755065918);
+  expect(landmark.travel_distance_meters).toBe(418.7794799804688);
+  expect(area.place_id).toBe("ChIJ_7LLvyb9DDkRMKKxP9YyXgs");
+  expect(area.display_name.text).toBe("Turkman Gate");
+  expect(area.display_name.language_code).toBe("en");
+  expect(area.containment).toBe(Containment.OUTSKIRTS);
+  // @ts-expect-error The API returns place_id, not placeId.
+  expect(landmark.placeId).toBeUndefined();
+});
+
+test("address descriptor landmarks should allow travel_distance_meters to be left out", () => {
+  // The API leaves it out when the landmark can't be reached on the road
+  // network near the target.
+  const landmark: Landmark = {
+    place_id: "ChIJLfiYDCT9DDkROoEa7NdupUM",
+    display_name: { language_code: "en", text: "Delite Cinema" },
+    types: ["establishment", "movie_theater", "point_of_interest"],
+    spatial_relationship: SpatialRelationship.ACROSS_THE_ROAD,
+    straight_line_distance_meters: 29.9306755065918,
+  };
+
+  expect(landmark.travel_distance_meters).toBeUndefined();
+});
+
+test("address descriptor types should be exported for callers to use", () => {
+  const name: LocalizedText = { language_code: "en", text: "Turkman Gate" };
+  const area: Area = {
+    place_id: "ChIJ_7LLvyb9DDkRMKKxP9YyXgs",
+    display_name: name,
+    containment: Containment.OUTSKIRTS,
+  };
+  const descriptor: AddressDescriptor = { landmarks: [], areas: [area] };
+
+  expect(descriptor.areas[0].display_name.text).toBe("Turkman Gate");
 });
