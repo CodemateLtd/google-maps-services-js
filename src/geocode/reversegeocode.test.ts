@@ -15,7 +15,15 @@
  */
 
 import axios from "axios";
-import { AddressDescriptor, ExtraComputation } from "../common";
+import {
+  AddressDescriptor,
+  Area,
+  Containment,
+  ExtraComputation,
+  Landmark,
+  LocalizedText,
+  SpatialRelationship,
+} from "../common";
 import {
   ReverseGeocodeRequest,
   reverseGeocode,
@@ -26,8 +34,6 @@ import {
 jest.mock("axios");
 
 const mockedAxios = axios as jest.Mocked<typeof axios>;
-
-type Landmark = AddressDescriptor["landmarks"][number];
 
 afterEach(() => {
   jest.clearAllMocks();
@@ -168,13 +174,15 @@ test("reverseGeocode response should type the address descriptor with the API's 
     "movie_theater",
     "point_of_interest",
   ]);
-  expect(landmark.spatial_relationship).toBe("ACROSS_THE_ROAD");
+  expect(landmark.spatial_relationship).toBe(
+    SpatialRelationship.ACROSS_THE_ROAD
+  );
   expect(landmark.straight_line_distance_meters).toBe(29.9306755065918);
   expect(landmark.travel_distance_meters).toBe(418.7794799804688);
   expect(area.place_id).toBe("ChIJ_7LLvyb9DDkRMKKxP9YyXgs");
   expect(area.display_name.text).toBe("Turkman Gate");
   expect(area.display_name.language_code).toBe("en");
-  expect(area.containment).toBe("OUTSKIRTS");
+  expect(area.containment).toBe(Containment.OUTSKIRTS);
   // @ts-expect-error The API returns place_id, not placeId.
   expect(landmark.placeId).toBeUndefined();
 });
@@ -186,9 +194,21 @@ test("address descriptor landmarks should allow travel_distance_meters to be lef
     place_id: "ChIJLfiYDCT9DDkROoEa7NdupUM",
     display_name: { language_code: "en", text: "Delite Cinema" },
     types: ["establishment", "movie_theater", "point_of_interest"],
-    spatial_relationship: "ACROSS_THE_ROAD" as Landmark["spatial_relationship"],
+    spatial_relationship: SpatialRelationship.ACROSS_THE_ROAD,
     straight_line_distance_meters: 29.9306755065918,
   };
 
   expect(landmark.travel_distance_meters).toBeUndefined();
+});
+
+test("address descriptor types should be exported for callers to use", () => {
+  const name: LocalizedText = { language_code: "en", text: "Turkman Gate" };
+  const area: Area = {
+    place_id: "ChIJ_7LLvyb9DDkRMKKxP9YyXgs",
+    display_name: name,
+    containment: Containment.OUTSKIRTS,
+  };
+  const descriptor: AddressDescriptor = { landmarks: [], areas: [area] };
+
+  expect(descriptor.areas[0].display_name.text).toBe("Turkman Gate");
 });

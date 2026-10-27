@@ -1656,80 +1656,110 @@ export enum ExtraComputation {
  * Descriptors</a> for more detail.
  */
 export interface AddressDescriptor {
-  // A ranked list of nearby landmarks. The most useful (recognizable and
-  // nearby) landmarks are ranked first.
+  /**
+   * A ranked list of nearby landmarks. The most useful (recognizable and
+   * nearby) landmarks are ranked first.
+   */
   landmarks: Landmark[];
-  // A ranked list of containing or adjacent areas. The most useful
-  // (recognizable and precise) areas are ranked first.
+  /**
+   * A ranked list of containing or adjacent areas. The most useful
+   * (recognizable and precise) areas are ranked first.
+   */
   areas: Area[];
 }
 
-interface Landmark {
-  // The Place ID of the underlying establishment serving as the landmark.
-  // Can be used to resolve more information about the landmark through Place
-  // Details or Place Id Lookup.
+/** A landmark that helps describe the location, listed in an address descriptor's `landmarks`. */
+export interface Landmark {
+  /**
+   * The Place ID of the underlying establishment serving as the landmark.
+   * Can be used to resolve more information about the landmark through Place
+   * Details or Place Id Lookup.
+   */
   place_id: string;
-  // The best name for the landmark.
+  /** The best name for the landmark. */
   display_name: LocalizedText;
-  // One or more values indicating the type of the returned result. Please see <a
-  // href="https://developers.google.com/maps/documentation/places/web-service/supported_types">Types
-  // </a> for more detail.
+  /**
+   * One or more values indicating the type of the returned result. Please see <a
+   * href="https://developers.google.com/maps/documentation/places/web-service/supported_types">Types
+   * </a> for more detail.
+   */
   types: string[];
-  // Defines the spatial relationship between the target location and the
-  // landmark.
+  /**
+   * Defines the spatial relationship between the target location and the
+   * landmark.
+   */
   spatial_relationship: SpatialRelationship;
-  // The straight line distance between the target location and one of the
-  // landmark's access points.
+  /**
+   * The straight line distance between the target location and one of the
+   * landmark's access points.
+   */
   straight_line_distance_meters: number;
-  // The travel distance along the road network between the target
-  // location's closest point on a road, and the landmark's closest access
-  // point on a road. This can be unpopulated if the landmark is disconnected
-  // from the part of the road network the target is closest to OR if the
-  // target location was not actually considered to be on the road network.
+  /**
+   * The travel distance along the road network between the target
+   * location's closest point on a road, and the landmark's closest access
+   * point on a road. This can be unpopulated if the landmark is disconnected
+   * from the part of the road network the target is closest to OR if the
+   * target location was not actually considered to be on the road network.
+   */
   travel_distance_meters?: number;
 }
 
 /**
  * An enum representing the relationship in space between the landmark and the target.
  */
-enum SpatialRelationship {
-  // This is the default relationship when nothing more specific below
-  // applies.
+export enum SpatialRelationship {
+  /**
+   * This is the default relationship when nothing more specific below
+   * applies.
+   */
   NEAR = "NEAR",
-  // The landmark has a spatial geometry and the target is within its
-  // bounds.
+  /**
+   * The landmark has a spatial geometry and the target is within its
+   * bounds.
+   */
   WITHIN = "WITHIN",
-  // The target is directly adjacent to the landmark or landmark's access
-  // point.
+  /**
+   * The target is directly adjacent to the landmark or landmark's access
+   * point.
+   */
   BESIDE = "BESIDE",
-  // The target is directly opposite the landmark on the other side of the
-  // road.
+  /**
+   * The target is directly opposite the landmark on the other side of the
+   * road.
+   */
   ACROSS_THE_ROAD = "ACROSS_THE_ROAD",
-  // On the same route as the landmark but not besides or across.
+  /** On the same route as the landmark but not besides or across. */
   DOWN_THE_ROAD = "DOWN_THE_ROAD",
-  // Not on the same route as the landmark but a single 'turn' away.
+  /** Not on the same route as the landmark but a single 'turn' away. */
   AROUND_THE_CORNER = "AROUND_THE_CORNER",
-  // Close to the landmark's structure but further away from its access
-  // point.
+  /**
+   * Close to the landmark's structure but further away from its access
+   * point.
+   */
   BEHIND = "BEHIND",
 }
 
-interface Area {
-  // The Place ID of the underlying area feature. Can be used to
-  // resolve more information about the area through Place Details or
-  // Place Id Lookup.
+/** An area that contains or is near the location, listed in an address descriptor's `areas`. */
+export interface Area {
+  /**
+   * The Place ID of the underlying area feature. Can be used to
+   * resolve more information about the area through Place Details or
+   * Place Id Lookup.
+   */
   place_id: string;
-  // The best name for the area.
+  /** The best name for the area. */
   display_name: LocalizedText;
-  // Defines the spatial relationship between the target location and the
-  // political region.
+  /**
+   * Defines the spatial relationship between the target location and the
+   * political region.
+   */
   containment: Containment;
 }
 
  /**
  * An enum representing the relationship in space between the area and the target.
  */
-enum Containment {
+export enum Containment {
   /**
    * Indicates an unknown containment returned by the server.
    */
@@ -1745,12 +1775,14 @@ enum Containment {
 /**
  * Localized variant of a text in a particular language.
  */
-interface LocalizedText {
-  // Localized string in the language corresponding to language_code below.
+export interface LocalizedText {
+  /** Localized string in the language corresponding to language_code below. */
   text: string;
-  // The text's BCP-47 language code, such as "en-US" or "sr-Latn".
-  //
-  // For more information, see
-  // http://www.unicode.org/reports/tr35/#Unicode_locale_identifier.
+  /**
+   * The text's BCP-47 language code, such as "en-US" or "sr-Latn".
+   *
+   * For more information, see
+   * http://www.unicode.org/reports/tr35/#Unicode_locale_identifier.
+   */
   language_code: string;
 }
