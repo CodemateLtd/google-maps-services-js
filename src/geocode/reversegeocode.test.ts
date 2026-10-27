@@ -38,7 +38,7 @@ test("reverseGeocode should call axios correctly", () => {
       lng: 24.9433353,
     },
     key: "foo",
-    enable_address_descriptor: true
+    extra_computations: ExtraComputation.ADDRESS_DESCRIPTORS,
   };
 
   reverseGeocode({ params: params }, mockedAxios);
@@ -83,5 +83,17 @@ test("serializer should sign extra_computations for premium plan requests", () =
     })
   ).toBe(
     "client=testClient&extra_computations=ADDRESS_DESCRIPTORS&latlng=28.640964%2C77.235875&signature=MUzvtzsXeekuOk-t8MO8Gh9qrwU="
+  );
+});
+
+test("serializer should keep sending the deprecated enable_address_descriptor", () => {
+  expect(
+    defaultParamsSerializer({
+      latlng: { lat: 28.640964, lng: 77.235875 },
+      enable_address_descriptor: true,
+      key: "YOUR_API_KEY",
+    })
+  ).toBe(
+    "enable_address_descriptor=True&key=YOUR_API_KEY&latlng=28.640964%2C77.235875"
   );
 });

@@ -86,10 +86,12 @@ export interface ReverseGeocodeRequest extends Partial<AxiosRequestConfig> {
      * Note: This parameter is available only for requests that include an API key or a client ID.
      */
     location_type?: ReverseGeocodingLocationType[];
-     /**
+    /**
      * Determines whether the address descriptor is returned in the response.
+     * @deprecated Use `extra_computations: ExtraComputation.ADDRESS_DESCRIPTORS`,
+     * the parameter the Geocoding API documents for address descriptors.
      */
-     enable_address_descriptor?: boolean;
+    enable_address_descriptor?: boolean;
     /**
      * An additional feature to return in the response.
      * Use `ExtraComputation.ADDRESS_DESCRIPTORS` to receive an address descriptor for the location in `address_descriptor`.
