@@ -16,10 +16,11 @@
 
 import { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
 import {
+  ApiKeyParams,
   CellTower,
   LatLngLiteral,
+  PremiumPlanParams,
   RadioType,
-  RequestParams,
   ResponseData,
   WifiAccessPoint,
 } from "./common";
@@ -46,7 +47,11 @@ export interface GeolocateRequest extends Partial<AxiosRequestConfig> {
     /** An array of WiFi access point objects. */
     wifiAccessPoints?: WifiAccessPoint[];
   };
-  params: RequestParams;
+  /**
+   * The Geolocation API accepts only API key authentication. Premium Plan `client_id` and `client_secret`
+   * are not supported, and `geolocate` rejects requests that include them.
+   */
+  params: ApiKeyParams;
 }
 
 export interface GeolocateResponseData extends ResponseData {
@@ -129,6 +134,20 @@ export function geolocate(
   { params, method = "post", url = defaultUrl, ...config }: GeolocateRequest,
   axiosInstance: AxiosInstance = defaultAxiosInstance
 ): Promise<GeolocateResponse> {
+  // The Geolocation API doesn't support Premium Plan URL signing, so
+  // client_secret would go into the query string as it is.
+  const premiumParams = params as Partial<PremiumPlanParams> | undefined;
+  if (
+    premiumParams?.client_id !== undefined ||
+    premiumParams?.client_secret !== undefined
+  ) {
+    return Promise.reject(
+      new Error(
+        "The Geolocation API accepts only API key authentication (params.key); client_id and client_secret are not supported."
+      )
+    );
+  }
+
   return axiosInstance({
     params,
     method,
