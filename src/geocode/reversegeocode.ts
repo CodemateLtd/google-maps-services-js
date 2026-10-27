@@ -14,7 +14,13 @@
  * limitations under the License.
  */
 
-import { AddressType, Language, LatLng, RequestParams } from "../common";
+import {
+  AddressType,
+  ExtraComputation,
+  Language,
+  LatLng,
+  RequestParams,
+} from "../common";
 import { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
 import { GeocodeResult, ResponseData, AddressDescriptor } from "../common";
 import { latLngToString, enableAddressDescriptorToString, serializer } from "../serialize";
@@ -84,6 +90,11 @@ export interface ReverseGeocodeRequest extends Partial<AxiosRequestConfig> {
      * Determines whether the address descriptor is returned in the response.
      */
      enable_address_descriptor?: boolean;
+    /**
+     * An additional feature to return in the response.
+     * Use `ExtraComputation.ADDRESS_DESCRIPTORS` to receive an address descriptor for the location in `address_descriptor`.
+     */
+    extra_computations?: ExtraComputation;
   } & RequestParams;
 }
 
