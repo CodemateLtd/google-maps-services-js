@@ -1538,8 +1538,13 @@ export enum RadioType {
   gsm = "gsm",
   cdma = "cdma",
   wcdma = "wcdma",
+  nr = "nr",
 }
 
+/**
+ * A cell tower for the `gsm`, `cdma`, `wcdma` and `lte` radio types.
+ * For `nr` (5G) cell towers, use {@link NewRadioCellTower}.
+ */
 export interface CellTower {
   /**
    * Unique identifier of the cell.
@@ -1549,13 +1554,41 @@ export interface CellTower {
    * and Cell ID. Specifying only the 16-bit Cell ID value in WCDMA networks may return inaccurate results.
    */
   cellId: number;
-  /** The Location Area Code (LAC) for GSM and WCDMA networks. The Network ID (NID) for CDMA networks. */
+  /** Not allowed: only NR cell towers have `newRadioCellId`. */
+  newRadioCellId?: never;
+  /**
+   * The Location Area Code (LAC) for GSM and WCDMA networks. The Network ID (NID) for CDMA networks.
+   * The Tracking Area Code (TAC) for LTE networks.
+   */
   locationAreaCode: number;
   /** The cell tower's Mobile Country Code (MCC). */
   mobileCountryCode: number;
   /** The cell tower's Mobile Network Code. This is the MNC for GSM and WCDMA; CDMA uses the System ID (SID). */
   mobileNetworkCode: number;
   /** The number of milliseconds since this cell was primary. If age is 0, the `cellId` represents a current measurement. */
+  age?: number;
+  /** Radio signal strength measured in dBm. */
+  signalStrength?: number;
+  /** The [timing advance](https://en.wikipedia.org/wiki/Timing_advance) value. */
+  timingAdvance?: number;
+}
+
+/**
+ * A cell tower for the `nr` (5G) radio type.
+ * Set `radioType` to `nr` in the request: if it is omitted, the Geolocation API assumes `gsm`.
+ */
+export interface NewRadioCellTower {
+  /** The 36-bit New Radio Cell Identity (NCI) of the cell. Valid range: 0–68719476735. */
+  newRadioCellId: number;
+  /** Not allowed: `cellId` is rejected for NR cell towers. */
+  cellId?: never;
+  /** The Tracking Area Code (TAC). Valid range: 0–16777215. */
+  locationAreaCode?: number;
+  /** The cell tower's Mobile Country Code (MCC). */
+  mobileCountryCode: number;
+  /** The cell tower's Mobile Network Code (MNC). */
+  mobileNetworkCode: number;
+  /** The number of milliseconds since this cell was primary. If age is 0, the `newRadioCellId` represents a current measurement. */
   age?: number;
   /** Radio signal strength measured in dBm. */
   signalStrength?: number;
