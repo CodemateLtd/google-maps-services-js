@@ -1548,22 +1548,26 @@ export enum RadioType {
 export interface CellTower {
   /**
    * Unique identifier of the cell.
-   * On GSM, this is the Cell ID (CID);
-   * CDMA networks use the Base Station ID (BID).
-   * WCDMA networks use the UTRAN/GERAN Cell Identity (UC-Id), which is a 32-bit value concatenating the Radio Network Controller (RNC)
-   * and Cell ID. Specifying only the 16-bit Cell ID value in WCDMA networks may return inaccurate results.
+   * On GSM, this is the 16-bit Cell ID (CID);
+   * CDMA networks use the 16-bit Base Station ID (BID). Valid range for GSM and CDMA: 0–65535.
+   * WCDMA networks use the UTRAN/GERAN Cell Identity (UC-Id), a 28-bit value concatenating the 12-bit Radio Network
+   * Controller ID (RNC-ID) and the 16-bit Cell ID: `rnc_id << 16 | cid`.
+   * LTE networks use the E-UTRAN Cell Identity (ECI), a 28-bit value concatenating the 20-bit E-UTRAN Node B ID (eNBId)
+   * and the 8-bit Cell ID: `enb_id << 8 | cid`. Valid range for WCDMA and LTE: 0–268435455.
+   * Specifying only the short Cell ID (CID) in WCDMA or LTE networks gives incorrect or zero results.
    */
   cellId: number;
   /** Not allowed: only NR cell towers have `newRadioCellId`. */
   newRadioCellId?: never;
   /**
    * The Location Area Code (LAC) for GSM and WCDMA networks. The Network ID (NID) for CDMA networks.
-   * The Tracking Area Code (TAC) for LTE networks.
+   * The Tracking Area Code (TAC) for LTE networks. Valid range: 0–65535.
+   * Required for the `gsm` (default) and `cdma` radio types, optional for `wcdma` and `lte`.
    */
-  locationAreaCode: number;
+  locationAreaCode?: number;
   /** The cell tower's Mobile Country Code (MCC). */
   mobileCountryCode: number;
-  /** The cell tower's Mobile Network Code. This is the MNC for GSM and WCDMA; CDMA uses the System ID (SID). */
+  /** The cell tower's Mobile Network Code. This is the MNC for GSM, WCDMA and LTE; CDMA uses the System ID (SID). */
   mobileNetworkCode: number;
   /** The number of milliseconds since this cell was primary. If age is 0, the `cellId` represents a current measurement. */
   age?: number;
