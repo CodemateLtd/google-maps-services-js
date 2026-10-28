@@ -72,6 +72,24 @@ test("GeolocateRequest should accept NR and LTE cell towers", () => {
   expect(lte.radioType).toBe("lte");
 });
 
+test("GeolocateRequest should accept LTE and WCDMA cell towers without locationAreaCode", () => {
+  const lte: GeolocateRequest["data"] = {
+    radioType: RadioType.lte,
+    cellTowers: [
+      { cellId: 170402199, mobileCountryCode: 310, mobileNetworkCode: 410 },
+    ],
+  };
+  const wcdma: GeolocateRequest["data"] = {
+    radioType: RadioType.wcdma,
+    cellTowers: [
+      { cellId: 268435455, mobileCountryCode: 310, mobileNetworkCode: 410 },
+    ],
+  };
+
+  expect(lte.cellTowers).toHaveLength(1);
+  expect(wcdma.cellTowers).toHaveLength(1);
+});
+
 test("GeolocateRequest should reject invalid cell towers", () => {
   const towers: GeolocateRequest["data"]["cellTowers"] = [
     // @ts-expect-error An NR tower needs newRadioCellId.
