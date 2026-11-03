@@ -1549,8 +1549,12 @@ export interface CellTower {
    * and Cell ID. Specifying only the 16-bit Cell ID value in WCDMA networks may return inaccurate results.
    */
   cellId: number;
-  /** The Location Area Code (LAC) for GSM and WCDMA networks. The Network ID (NID) for CDMA networks. */
-  locationAreaCode: number;
+  /**
+   * The Location Area Code (LAC) for GSM and WCDMA networks. The Network ID (NID) for CDMA networks.
+   * The Tracking Area Code (TAC) for LTE networks. Valid range: 0–65535.
+   * Required for the `gsm` (default) and `cdma` radio types, optional for `wcdma` and `lte`.
+   */
+  locationAreaCode?: number;
   /** The cell tower's Mobile Country Code (MCC). */
   mobileCountryCode: number;
   /** The cell tower's Mobile Network Code. This is the MNC for GSM and WCDMA; CDMA uses the System ID (SID). */

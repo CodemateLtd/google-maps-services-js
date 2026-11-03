@@ -15,7 +15,8 @@
  */
 
 import axios from "axios";
-import { geolocate, defaultUrl } from "./geolocate";
+import { RadioType } from "./common";
+import { GeolocateRequest, geolocate, defaultUrl } from "./geolocate";
 
 jest.mock("axios");
 
@@ -37,4 +38,22 @@ test("elevation should call axios correctly", () => {
     data: data,
     url: defaultUrl,
   });
+});
+
+test("GeolocateRequest should accept LTE and WCDMA cell towers without locationAreaCode", () => {
+  const lte: GeolocateRequest["data"] = {
+    radioType: RadioType.lte,
+    cellTowers: [
+      { cellId: 170402199, mobileCountryCode: 310, mobileNetworkCode: 410 },
+    ],
+  };
+  const wcdma: GeolocateRequest["data"] = {
+    radioType: RadioType.wcdma,
+    cellTowers: [
+      { cellId: 268435455, mobileCountryCode: 310, mobileNetworkCode: 410 },
+    ],
+  };
+
+  expect(lte.cellTowers).toHaveLength(1);
+  expect(wcdma.cellTowers).toHaveLength(1);
 });
