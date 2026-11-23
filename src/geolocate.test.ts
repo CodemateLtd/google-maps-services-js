@@ -15,7 +15,7 @@
  */
 
 import axios from "axios";
-import { geolocate, defaultUrl } from "./geolocate";
+import { GeolocateRequest, geolocate, defaultUrl } from "./geolocate";
 
 jest.mock("axios");
 
@@ -36,5 +36,106 @@ test("elevation should call axios correctly", () => {
     params: params,
     data: data,
     url: defaultUrl,
+  });
+});
+
+test("geolocate should remove Premium Plan params before calling axios", () => {
+  const cases = [
+    {
+      params: {
+        client_id: "gme-example",
+        client_secret: "DUMMY_SIGNING_SECRET",
+      },
+      expected: {},
+    },
+    {
+      params: {
+        key: "foo",
+        client_id: "gme-example",
+        client_secret: "DUMMY_SIGNING_SECRET",
+      },
+      expected: { key: "foo" },
+    },
+    {
+      params: { key: "foo", client_secret: "DUMMY_SIGNING_SECRET" },
+      expected: { key: "foo" },
+    },
+    { params: { key: "foo", client_id: "" }, expected: { key: "foo" } },
+    {
+      params: { key: "foo", client_id: null, client_secret: null },
+      expected: { key: "foo" },
+    },
+  ];
+
+  for (const { params, expected } of cases) {
+    // Bypass the type, as a JavaScript caller would.
+    geolocate(
+      {
+        params: params as unknown as GeolocateRequest["params"],
+        data: { considerIp: false },
+      },
+      mockedAxios
+    );
+
+    expect(mockedAxios).toHaveBeenLastCalledWith({
+      method: "post",
+      params: expected,
+      data: { considerIp: false },
+      url: defaultUrl,
+    });
+  }
+});
+
+test("geolocate should remove Premium Plan params from URLSearchParams", () => {
+  const params = new URLSearchParams({
+    key: "foo",
+    client_id: "gme-example",
+    client_secret: "DUMMY_SIGNING_SECRET",
+  });
+  geolocate(
+    {
+      params: params as unknown as GeolocateRequest["params"],
+      data: { considerIp: false },
+    },
+    mockedAxios
+  );
+
+  expect(mockedAxios).toHaveBeenCalledWith({
+    method: "post",
+    params: new URLSearchParams({ key: "foo" }),
+    data: { considerIp: false },
+    url: defaultUrl,
+  });
+  expect(params.toString()).toBe(
+    "key=foo&client_id=gme-example&client_secret=DUMMY_SIGNING_SECRET"
+  );
+});
+
+test("geolocate should not change the caller's params", () => {
+  const params = {
+    key: "foo",
+    client_id: "gme-example",
+    client_secret: "DUMMY_SIGNING_SECRET",
+  };
+  geolocate({ params, data: {} }, mockedAxios);
+
+  expect(params).toEqual({
+    key: "foo",
+    client_id: "gme-example",
+    client_secret: "DUMMY_SIGNING_SECRET",
+  });
+});
+
+test("geolocate should pass caller config to axios", () => {
+  const params = { key: "foo" };
+  const data = { considerIp: false };
+  geolocate({ params, data, timeout: 1000 }, mockedAxios);
+
+  expect(mockedAxios).toHaveBeenCalledWith({
+    method: "post",
+    params,
+    data,
+    url: defaultUrl,
+    timeout: 1000,
   });
 });
