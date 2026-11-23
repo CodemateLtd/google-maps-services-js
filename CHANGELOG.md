@@ -20,3 +20,7 @@
 ### Features
 
 * Added Address Descriptors to Geocoding response. ([#1187](https://github.com/googlemaps/google-maps-services-js/issues/1187)) ([47db368](https://github.com/googlemaps/google-maps-services-js/commit/47db36856c2235433d01b1d82d6965cdef07b6b6))
+
+## Earlier releases
+
+Release notes for most earlier versions are in [GitHub Releases](https://github.com/googlemaps/google-maps-services-js/releases). For 2.0.2 and earlier, including versions with no notes in GitHub Releases, see the [previous changelog](https://github.com/googlemaps/google-maps-services-js/blob/50c89a103f78fa1b7a9b909631b4346b56974ae5/CHANGELOG.md).
