@@ -111,8 +111,8 @@ For more information, see the reference [documentation]. The TypeScript types ar
 In order to run the end-to-end tests, you'll need to supply your API key via an
 environment variable.
 
-    $ export MAPS_API_KEY=YOUR_API_KEY
-    $ npm test
+    $ export GOOGLE_MAPS_API_KEY=YOUR_API_KEY
+    $ npm run test:e2e
 
 ## Migration
 
