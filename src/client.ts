@@ -181,10 +181,32 @@ export class Client {
     return this.experienceId;
   }
 
+  /**
+   * Calls the Directions API (Legacy).
+   *
+   * Directions API (Legacy) is in
+   * [Legacy status](https://developers.google.com/maps/legacy): it can no
+   * longer be enabled for new Google Cloud projects, and existing projects
+   * remain fully supported. For new features and improved performance,
+   * [migrate to the Routes API](https://developers.google.com/maps/documentation/routes/migrate-routes),
+   * which has its own Node.js client,
+   * [`@googlemaps/routing`](https://www.npmjs.com/package/@googlemaps/routing).
+   */
   directions(request: DirectionsRequest): Promise<DirectionsResponse> {
     return directions(request, this.axiosInstance);
   }
 
+  /**
+   * Calls the Distance Matrix API (Legacy).
+   *
+   * Distance Matrix API (Legacy) is in
+   * [Legacy status](https://developers.google.com/maps/legacy): it can no
+   * longer be enabled for new Google Cloud projects, and existing projects
+   * remain fully supported. For new features and improved performance,
+   * [migrate to the Routes API](https://developers.google.com/maps/documentation/routes/migrate-routes),
+   * which has its own Node.js client,
+   * [`@googlemaps/routing`](https://www.npmjs.com/package/@googlemaps/routing).
+   */
   distancematrix(
     request: DistanceMatrixRequest
   ): Promise<DistanceMatrixResponse> {
@@ -230,36 +252,113 @@ export class Client {
     return reverseGeocode(request, this.axiosInstance);
   }
 
+  /**
+   * Calls Place Autocomplete in Places API (Legacy).
+   *
+   * Places API (Legacy) is in
+   * [Legacy status](https://developers.google.com/maps/legacy): it can no
+   * longer be enabled for new Google Cloud projects, and existing projects
+   * remain fully supported. For new features and improved performance,
+   * [migrate to Places API (New)](https://developers.google.com/maps/documentation/places/web-service/legacy/migrate-overview),
+   * which has its own Node.js client,
+   * [`@googlemaps/places`](https://www.npmjs.com/package/@googlemaps/places).
+   */
   placeAutocomplete(
     request: PlaceAutocompleteRequest
   ): Promise<PlaceAutocompleteResponse> {
     return placeAutocomplete(request, this.axiosInstance);
   }
 
+  /**
+   * Calls Place Details in Places API (Legacy).
+   *
+   * Places API (Legacy) is in
+   * [Legacy status](https://developers.google.com/maps/legacy): it can no
+   * longer be enabled for new Google Cloud projects, and existing projects
+   * remain fully supported. For new features and improved performance,
+   * [migrate to Places API (New)](https://developers.google.com/maps/documentation/places/web-service/legacy/migrate-overview),
+   * which has its own Node.js client,
+   * [`@googlemaps/places`](https://www.npmjs.com/package/@googlemaps/places).
+   */
   placeDetails(request: PlaceDetailsRequest): Promise<PlaceDetailsResponse> {
     return placeDetails(request, this.axiosInstance);
   }
 
+  /**
+   * Calls Find Place in Places API (Legacy).
+   *
+   * Places API (Legacy) is in
+   * [Legacy status](https://developers.google.com/maps/legacy): it can no
+   * longer be enabled for new Google Cloud projects, and existing projects
+   * remain fully supported. For new features and improved performance,
+   * [migrate to Places API (New)](https://developers.google.com/maps/documentation/places/web-service/legacy/migrate-overview),
+   * which has its own Node.js client,
+   * [`@googlemaps/places`](https://www.npmjs.com/package/@googlemaps/places).
+   */
   findPlaceFromText(
     request: FindPlaceFromTextRequest
   ): Promise<FindPlaceFromTextResponse> {
     return findPlaceFromText(request, this.axiosInstance);
   }
 
+  /**
+   * Calls Place Photos in Places API (Legacy).
+   *
+   * Places API (Legacy) is in
+   * [Legacy status](https://developers.google.com/maps/legacy): it can no
+   * longer be enabled for new Google Cloud projects, and existing projects
+   * remain fully supported. For new features and improved performance,
+   * [migrate to Places API (New)](https://developers.google.com/maps/documentation/places/web-service/legacy/migrate-overview),
+   * which has its own Node.js client,
+   * [`@googlemaps/places`](https://www.npmjs.com/package/@googlemaps/places).
+   */
   placePhoto(request: PlacePhotoRequest): Promise<PlacePhotoResponse> {
     return placePhoto(request, this.axiosInstance);
   }
 
+  /**
+   * Calls Nearby Search in Places API (Legacy).
+   *
+   * Places API (Legacy) is in
+   * [Legacy status](https://developers.google.com/maps/legacy): it can no
+   * longer be enabled for new Google Cloud projects, and existing projects
+   * remain fully supported. For new features and improved performance,
+   * [migrate to Places API (New)](https://developers.google.com/maps/documentation/places/web-service/legacy/migrate-overview),
+   * which has its own Node.js client,
+   * [`@googlemaps/places`](https://www.npmjs.com/package/@googlemaps/places).
+   */
   placesNearby(request: PlacesNearbyRequest): Promise<PlacesNearbyResponse> {
     return placesNearby(request, this.axiosInstance);
   }
 
+  /**
+   * Calls Query Autocomplete in Places API (Legacy).
+   *
+   * Places API (Legacy) is in
+   * [Legacy status](https://developers.google.com/maps/legacy): it can no
+   * longer be enabled for new Google Cloud projects, and existing projects
+   * remain fully supported. For new features and improved performance,
+   * [migrate to Places API (New)](https://developers.google.com/maps/documentation/places/web-service/legacy/migrate-overview),
+   * which has its own Node.js client,
+   * [`@googlemaps/places`](https://www.npmjs.com/package/@googlemaps/places).
+   */
   placeQueryAutocomplete(
     request: PlaceQueryAutocompleteRequest
   ): Promise<PlaceQueryAutocompleteResponse> {
     return placeQueryAutocomplete(request, this.axiosInstance);
   }
 
+  /**
+   * Calls Text Search in Places API (Legacy).
+   *
+   * Places API (Legacy) is in
+   * [Legacy status](https://developers.google.com/maps/legacy): it can no
+   * longer be enabled for new Google Cloud projects, and existing projects
+   * remain fully supported. For new features and improved performance,
+   * [migrate to Places API (New)](https://developers.google.com/maps/documentation/places/web-service/legacy/migrate-overview),
+   * which has its own Node.js client,
+   * [`@googlemaps/places`](https://www.npmjs.com/package/@googlemaps/places).
+   */
   textSearch(request: TextSearchRequest): Promise<TextSearchResponse> {
     return textSearch(request, this.axiosInstance);
   }
