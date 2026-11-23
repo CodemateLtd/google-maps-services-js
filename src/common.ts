@@ -102,6 +102,8 @@ export enum Status {
   ZERO_RESULTS = "ZERO_RESULTS",
   /** indicates that the referenced location (place_id) was not found in the Places database. */
   NOT_FOUND = "NOT_FOUND",
+  /** indicates that there's no available data for the input locations (Elevation API). */
+  DATA_NOT_AVAILABLE = "DATA_NOT_AVAILABLE",
 }
 
 export interface PlacePhoto {
