@@ -246,7 +246,7 @@ You can also discuss this library on our [Discord server].
 [developer community channels]: https://developers.google.com/maps/developer-community
 [Discord server]: https://discord.gg/hYsWbmk
 [file an issue]: https://github.com/googlemaps/google-maps-services-js/issues/new/choose
-[license]: LICENSE
+[license]: LICENSE.md
 [pull request]: https://github.com/googlemaps/google-maps-services-js/compare
 [project]: https://developers.google.com/maps/documentation/javascript/cloud-setup#enabling-apis
 [semantic versioning]: https://semver.org
