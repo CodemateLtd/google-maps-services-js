@@ -123,18 +123,18 @@ export interface ClientOptions {
  *
  * ### Instantiate with defaults
  * ```
- * const client = Client()
+ * const client = new Client()
  * ```
  *
  * ### Instantiate with config
  * ```
- * const client = Client({config})
+ * const client = new Client({config})
  * ```
  *
  * ### Instantiate with axiosInstance **Advanced**
  * ```
  * const axiosInstance = axios.create(config)
- * const client = Client({axiosInstance})
+ * const client = new Client({axiosInstance})
  * ```
  */
 export class Client {
