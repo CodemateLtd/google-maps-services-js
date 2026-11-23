@@ -15,7 +15,13 @@
  */
 
 import axios from "axios";
-import { geocode, defaultParamsSerializer, defaultUrl } from "./geocode";
+import { ExtraComputation } from "../common";
+import {
+  GeocodeRequest,
+  geocode,
+  defaultParamsSerializer,
+  defaultUrl,
+} from "./geocode";
 
 jest.mock("axios");
 
@@ -37,4 +43,39 @@ test("geocode should call axios correctly", () => {
     paramsSerializer: defaultParamsSerializer,
     url: defaultUrl,
   });
+});
+
+test("serializer should send extra_computations with an address as in the address descriptors guide", () => {
+  const params: GeocodeRequest["params"] = {
+    address: "4118, Kalan Mehal Chandni Chowk, New Delhi",
+    extra_computations: ExtraComputation.ADDRESS_DESCRIPTORS,
+    key: "YOUR_API_KEY",
+  };
+
+  expect(defaultParamsSerializer(params)).toBe(
+    "address=4118%2C%20Kalan%20Mehal%20Chandni%20Chowk%2C%20New%20Delhi&extra_computations=ADDRESS_DESCRIPTORS&key=YOUR_API_KEY"
+  );
+});
+
+test("serializer should send extra_computations with a place ID as in the address descriptors guide", () => {
+  const params: GeocodeRequest["params"] = {
+    place_id: "ChIJyxAX8Bj9DDkRgBfAnBYa66Q",
+    extra_computations: ExtraComputation.ADDRESS_DESCRIPTORS,
+    key: "YOUR_API_KEY",
+  };
+
+  expect(defaultParamsSerializer(params)).toBe(
+    "extra_computations=ADDRESS_DESCRIPTORS&key=YOUR_API_KEY&place_id=ChIJyxAX8Bj9DDkRgBfAnBYa66Q"
+  );
+});
+
+test("serializer should omit extra_computations when not set", () => {
+  expect(
+    defaultParamsSerializer({
+      address: "4118, Kalan Mehal Chandni Chowk, New Delhi",
+      key: "YOUR_API_KEY",
+    })
+  ).toBe(
+    "address=4118%2C%20Kalan%20Mehal%20Chandni%20Chowk%2C%20New%20Delhi&key=YOUR_API_KEY"
+  );
 });

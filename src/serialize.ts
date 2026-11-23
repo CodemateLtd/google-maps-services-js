@@ -44,13 +44,17 @@ export function latLngToString(o: LatLng) {
     .join(",");
 }
 
-export function enableAddressDescriptorToString(o: boolean) {
+export function enableAddressDescriptorToString(
+  o: boolean
+): string | undefined {
   if (typeof o === "string") {
     return o;
   } else if (o == true) {
     return "True";
   } else {
-    return "False";
+    // The API returns a descriptor whenever the parameter is present, whatever
+    // its value, so leave it out to turn descriptors off.
+    return undefined;
   }
 }
 
