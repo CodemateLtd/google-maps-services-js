@@ -145,6 +145,40 @@ test("serializer joins arrays with commas for the comma format", () => {
   ).toBe("fields=name,geometry&x=a%2Cb");
 });
 
+test("serializer rejects query string options it does not implement", () => {
+  const params = { foo: ["a", "b"] };
+
+  expect(() => serializer({}, "http://mock.url", {})(params)).toThrow(
+    TypeError
+  );
+  for (const arrayFormat of ["none", "bracket"]) {
+    expect(() =>
+      serializer({}, "http://mock.url", { arrayFormat })(params)
+    ).toThrow(TypeError);
+  }
+  expect(() =>
+    serializer({}, "http://mock.url", {
+      arrayFormat: "separator",
+      arrayFormatSeparator: "||",
+    })(params)
+  ).toThrow(TypeError);
+
+  for (const option of [
+    "encode",
+    "strict",
+    "sort",
+    "skipNull",
+    "skipEmptyString",
+  ]) {
+    expect(() =>
+      serializer({}, "http://mock.url", {
+        arrayFormat: "comma",
+        [option]: false,
+      })(params)
+    ).toThrow(TypeError);
+  }
+});
+
 test("serializer creates premium plan query string if premium plan params are included", () => {
   const params = {
     avoid: "ferries",
