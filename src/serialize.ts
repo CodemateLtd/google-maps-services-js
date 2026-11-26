@@ -18,11 +18,91 @@ import { LatLng, LatLngBounds, LatLngLiteral } from "./common";
 
 import { encodePath } from "./util";
 import { createSignature } from "@googlemaps/url-signature";
-import queryString from "query-string";
-
-const qs = queryString.stringify;
 
 const separator = "|";
+
+// Options of query-string's stringify that can change its output. The
+// serializer below implements only their defaults, so any explicit value is
+// rejected.
+const unsupportedQueryStringOptions = [
+  "encode",
+  "strict",
+  "sort",
+  "skipNull",
+  "skipEmptyString",
+];
+
+type QueryStringOptions = {
+  [option: string]: unknown;
+  arrayFormat?: string;
+  arrayFormatSeparator?: string;
+};
+
+function strictUriEncode(value: unknown): string {
+  return encodeURIComponent(value as string).replace(
+    /[!'()*]/g,
+    (c) => `%${c.charCodeAt(0).toString(16).toUpperCase()}`
+  );
+}
+
+/**
+ * Builds a query string the way `stringify` from query-string 7 did, for the
+ * `separator` and `comma` array formats, so request URLs and premium plan
+ * signatures stay byte-identical.
+ */
+function stringifyQuery(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  params: Record<string, any>,
+  queryStringOptions: object
+): string {
+  const options = queryStringOptions as QueryStringOptions;
+  const { arrayFormat, arrayFormatSeparator = "," } = options;
+
+  if (arrayFormat !== "separator" && arrayFormat !== "comma") {
+    throw new TypeError(`Unsupported arrayFormat: ${arrayFormat}`);
+  }
+  if (
+    typeof arrayFormatSeparator !== "string" ||
+    arrayFormatSeparator.length !== 1
+  ) {
+    throw new TypeError("arrayFormatSeparator must be single character string");
+  }
+  for (const option of unsupportedQueryStringOptions) {
+    if (options[option] !== undefined) {
+      throw new TypeError(`Unsupported query string option: ${option}`);
+    }
+  }
+
+  return Object.keys(params)
+    .sort()
+    .map((key) => {
+      const value = params[key];
+
+      if (value === undefined) {
+        return "";
+      }
+
+      if (value === null) {
+        return strictUriEncode(key);
+      }
+
+      if (Array.isArray(value)) {
+        const items = value
+          .filter((item) => item !== undefined)
+          .map((item) => strictUriEncode(item === null ? "" : item));
+
+        if (items.length === 0) {
+          return "";
+        }
+
+        return `${strictUriEncode(key)}=${items.join(arrayFormatSeparator)}`;
+      }
+
+      return `${strictUriEncode(key)}=${strictUriEncode(value)}`;
+    })
+    .filter((part) => part.length > 0)
+    .join("&");
+}
 
 export function latLngToString(o: LatLng) {
   if (typeof o === "string") {
@@ -141,7 +221,7 @@ export function serializer(
       );
     }
 
-    return qs(serializedParams, queryStringOptions);
+    return stringifyQuery(serializedParams, queryStringOptions);
   };
 }
 
@@ -165,7 +245,10 @@ export function createPremiumPlanQueryString(
   delete serializedParams.client_id;
   delete serializedParams.client_secret;
 
-  const partialQueryString = qs(serializedParams, queryStringOptions);
+  const partialQueryString = stringifyQuery(
+    serializedParams,
+    queryStringOptions
+  );
   const unsignedUrl = `${baseUrl}?${partialQueryString}`;
   const signature = createSignature(unsignedUrl, clientSecret);
 

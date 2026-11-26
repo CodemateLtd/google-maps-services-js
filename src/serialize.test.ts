@@ -82,6 +82,103 @@ test("serializer should return pipe joined arrays by default", () => {
   );
 });
 
+test("serializer strictly encodes keys and values", () => {
+  expect(
+    serializer(
+      {},
+      "http://mock.url"
+    )({
+      query: "Joe's (pizza)!*",
+      name: "Café & bar = ok",
+      fields: "name|geometry,place_id",
+      emoji: "😀",
+      tilde: "a~b-c_d.e",
+    })
+  ).toBe(
+    "emoji=%F0%9F%98%80&fields=name%7Cgeometry%2Cplace_id&name=Caf%C3%A9%20%26%20bar%20%3D%20ok&query=Joe%27s%20%28pizza%29%21%2A&tilde=a~b-c_d.e"
+  );
+});
+
+test("serializer handles null, undefined and empty values", () => {
+  expect(
+    serializer({}, "http://mock.url")({ a: null, b: undefined, c: "" })
+  ).toBe("a&c=");
+  expect(
+    serializer(
+      {},
+      "http://mock.url"
+    )({
+      empty: [],
+      undef: [undefined],
+      mixed: ["a", null, undefined, "b c|d"],
+      nul: [null],
+    })
+  ).toBe("mixed=a||b%20c%7Cd&nul=");
+});
+
+test("serializer converts numbers, booleans and dates to strings", () => {
+  expect(
+    serializer({}, "http://mock.url")({ n: 1.5, z: 0, t: true, f: false })
+  ).toBe("f=false&n=1.5&t=true&z=0");
+
+  // Date#toString depends on the local time zone, so build the expectation
+  // from it and check the strict encoding of its parentheses.
+  const d = new Date(0);
+  expect(serializer({}, "http://mock.url")({ d })).toBe(
+    "d=" + encodeURIComponent(String(d)).replace("(", "%28").replace(")", "%29")
+  );
+});
+
+test("serializer sorts by key, not by key=value", () => {
+  expect(serializer({}, "http://mock.url")({ "a-b": 1, a: 2, B: 3 })).toBe(
+    "B=3&a=2&a-b=1"
+  );
+});
+
+test("serializer joins arrays with commas for the comma format", () => {
+  expect(
+    serializer({}, "http://mock.url", { arrayFormat: "comma" })({
+      fields: ["name", "geometry"],
+      x: ["a,b"],
+      y: [],
+    })
+  ).toBe("fields=name,geometry&x=a%2Cb");
+});
+
+test("serializer rejects query string options it does not implement", () => {
+  const params = { foo: ["a", "b"] };
+
+  expect(() => serializer({}, "http://mock.url", {})(params)).toThrow(
+    TypeError
+  );
+  for (const arrayFormat of ["none", "bracket"]) {
+    expect(() =>
+      serializer({}, "http://mock.url", { arrayFormat })(params)
+    ).toThrow(TypeError);
+  }
+  expect(() =>
+    serializer({}, "http://mock.url", {
+      arrayFormat: "separator",
+      arrayFormatSeparator: "||",
+    })(params)
+  ).toThrow(TypeError);
+
+  for (const option of [
+    "encode",
+    "strict",
+    "sort",
+    "skipNull",
+    "skipEmptyString",
+  ]) {
+    expect(() =>
+      serializer({}, "http://mock.url", {
+        arrayFormat: "comma",
+        [option]: false,
+      })(params)
+    ).toThrow(TypeError);
+  }
+});
+
 test("serializer creates premium plan query string if premium plan params are included", () => {
   const params = {
     avoid: "ferries",
